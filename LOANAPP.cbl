@@ -23,17 +23,19 @@
 
        WORKING-STORAGE SECTION.
        01  WS-RECORD-COUNT         PIC 9(05) VALUE 0.
-       01  WS-PROCESS-FLAG         PIC X VALUE 'N'.
+       01  EOF-FLAG                PIC X VALUE 'N'.
+           88  EOF-REACHED         VALUE 'Y'.
+           88  NOT-EOF             VALUE 'N'.
        01  WS-CUSTOMER-STATUS      PIC X(20).
 
        PROCEDURE DIVISION.
            OPEN INPUT LOAN-INPUT-FILE
            OPEN OUTPUT LOAN-OUTPUT-FILE
 
-           PERFORM UNTIL EOF-FLAG
+           PERFORM UNTIL EOF-REACHED
                READ LOAN-INPUT-FILE
                    AT END
-                       SET EOF-FLAG TO TRUE
+                       SET EOF-REACHED TO TRUE
                    NOT AT END
                        ADD 1 TO WS-RECORD-COUNT
                        PERFORM PROCESS-LOAN-RECORD
@@ -57,6 +59,3 @@
                   WS-CUSTOMER-STATUS DELIMITED BY SPACE
                   INTO LOAN-OUTPUT-RECORD
            WRITE LOAN-OUTPUT-RECORD.
-
-       EOF-FLAG SECTION.
-       88  EOF-FLAG VALUE 'Y' FALSE 'N'.
